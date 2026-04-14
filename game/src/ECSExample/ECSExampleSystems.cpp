@@ -219,9 +219,7 @@ namespace ECSExample
 
             if (hud.player == nullptr || !hud.player->active)
             {
-                hud.player = GetScene().FindEntityWithName(hud.playerName);
-                if (hud.player == nullptr)
-                    hud.player = GetScene().GetEntityWithTag("ExamplePlayer");
+                continue;
             }
 
             std::string message = "Collected: -- / --";

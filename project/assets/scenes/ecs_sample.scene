@@ -354,11 +354,11 @@ Entities:
       color: [0.86, 0.32, 0.95, 1]
       ModelAsset:
         uuid: 17154083321347000101
-    ECSExample::Spin:
-      speedDegrees: 110
     ECSExample::Hover:
       amplitude: 0.28
       speed: 2.5
+    ECSExample::Spin:
+      speedDegrees: 110
   - Entity: 930100
     Name: Pickup_00
     Tag: ExamplePickup
@@ -399,13 +399,13 @@ Entities:
       color: [1, 0.87, 0.22, 1]
       ModelAsset:
         uuid: 17154083321347000101
-    ECSExample::Spin:
-      speedDegrees: 120
+    ECSExample::Collectible:
+      collectorTag: ExamplePlayer
     ECSExample::Hover:
       amplitude: 0.18
       speed: 2.1
-    ECSExample::Collectible:
-      collectorTag: ExamplePlayer
+    ECSExample::Spin:
+      speedDegrees: 120
   - Entity: 930101
     Name: Pickup_01
     Tag: ExamplePickup
@@ -446,13 +446,13 @@ Entities:
       color: [1, 0.76, 0.18, 1]
       ModelAsset:
         uuid: 17154083321347000101
-    ECSExample::Spin:
-      speedDegrees: 130
+    ECSExample::Collectible:
+      collectorTag: ExamplePlayer
     ECSExample::Hover:
       amplitude: 0.16
       speed: 2.4
-    ECSExample::Collectible:
-      collectorTag: ExamplePlayer
+    ECSExample::Spin:
+      speedDegrees: 130
   - Entity: 930102
     Name: Pickup_02
     Tag: ExamplePickup
@@ -493,13 +493,13 @@ Entities:
       color: [0.95, 0.63, 0.16, 1]
       ModelAsset:
         uuid: 17154083321347000101
-    ECSExample::Spin:
-      speedDegrees: 140
+    ECSExample::Collectible:
+      collectorTag: ExamplePlayer
     ECSExample::Hover:
       amplitude: 0.2
       speed: 2
-    ECSExample::Collectible:
-      collectorTag: ExamplePlayer
+    ECSExample::Spin:
+      speedDegrees: 140
   - Entity: 930103
     Name: Pickup_03
     Tag: ExamplePickup
@@ -540,13 +540,13 @@ Entities:
       color: [1, 0.9, 0.38, 1]
       ModelAsset:
         uuid: 17154083321347000101
-    ECSExample::Spin:
-      speedDegrees: 100
+    ECSExample::Collectible:
+      collectorTag: ExamplePlayer
     ECSExample::Hover:
       amplitude: 0.22
       speed: 2.7
-    ECSExample::Collectible:
-      collectorTag: ExamplePlayer
+    ECSExample::Spin:
+      speedDegrees: 100
   - Entity: 930104
     Name: Pickup_04
     Tag: ExamplePickup
@@ -587,19 +587,21 @@ Entities:
       color: [0.98, 0.8, 0.26, 1]
       ModelAsset:
         uuid: 17154083321347000101
-    ECSExample::Spin:
-      speedDegrees: 115
+    ECSExample::Collectible:
+      collectorTag: ExamplePlayer
     ECSExample::Hover:
       amplitude: 0.18
       speed: 2.2
-    ECSExample::Collectible:
-      collectorTag: ExamplePlayer
+    ECSExample::Spin:
+      speedDegrees: 115
   - Entity: 930200
     Name: HUD
     Tag: ""
     Canis::Canvas:
       active: true
       renderMode: 0
+      scaleMode: 1
+      screenSize: [1280, 800]
     Canis::RectTransform:
       active: true
       position: [0, 0]
@@ -621,7 +623,7 @@ Entities:
     Canis::RectTransform:
       active: true
       position: [24, -24]
-      size: [240, 40]
+      size: [108, 28]
       scale: [1, 1]
       anchorMin: [0, 1]
       anchorMax: [0, 1]
@@ -634,7 +636,7 @@ Entities:
       children:
         []
     Canis::Text:
-      text: ECS sample loading...
+      text: "Collected:"
       color: [1, 1, 1, 1]
       alignment: 0
       horizontalBoundary: 0

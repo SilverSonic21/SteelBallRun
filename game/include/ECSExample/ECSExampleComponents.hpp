@@ -86,12 +86,8 @@ namespace ECSExample
         Canis::Entity* entity = nullptr;
 
         void Create() {}
-
-        std::string title = "ECS Sample Project";
-        std::string playerName = "ECS Player";
+        
         Canis::Entity* player = nullptr;
-        bool showControls = true;
-        bool showSystemNotes = true;
     };
 
     void RegisterSamplePlayerComponent(Canis::App& _app);

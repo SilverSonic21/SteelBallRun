@@ -83,11 +83,7 @@ namespace ECSExample
 
     void RegisterSampleHUDComponent(Canis::App& _app)
     {
-        REGISTER_PROPERTY(sampleHUDComponentConf, ECSExample::SampleHUD, title);
-        REGISTER_PROPERTY(sampleHUDComponentConf, ECSExample::SampleHUD, playerName);
         REGISTER_PROPERTY(sampleHUDComponentConf, ECSExample::SampleHUD, player);
-        REGISTER_PROPERTY(sampleHUDComponentConf, ECSExample::SampleHUD, showControls);
-        REGISTER_PROPERTY(sampleHUDComponentConf, ECSExample::SampleHUD, showSystemNotes);
 
         DEFAULT_COMPONENT_CONFIG_AND_REQUIRED(sampleHUDComponentConf, ECSExample::SampleHUD, Canis::RectTransform, Canis::Text);
 
