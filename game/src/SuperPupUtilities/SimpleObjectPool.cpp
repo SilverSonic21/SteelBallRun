@@ -47,7 +47,7 @@ namespace SuperPupUtilities
 
     void SimpleObjectPool::Update(float _dt)
     {
-        (void)_dt;
+        
     }
 
     void SimpleObjectPool::ApplySpawnTransform(

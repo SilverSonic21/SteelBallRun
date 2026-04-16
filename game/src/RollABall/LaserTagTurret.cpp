@@ -11,15 +11,12 @@
 
 namespace RollABall
 {
-    namespace
-    {
-        constexpr float Tau = 6.28318530718f;
-    }
 
     Canis::ScriptConf laserTagTurretConf = {};
 
     void RegisterLaserTagTurretScript(Canis::App& _app)
     {
+        REGISTER_PROPERTY(laserTagTurretConf, RollABall::LaserTagTurret, laserPrefab);
         REGISTER_PROPERTY(laserTagTurretConf, RollABall::LaserTagTurret, targetTag);
         REGISTER_PROPERTY(laserTagTurretConf, RollABall::LaserTagTurret, poolCode);
         REGISTER_PROPERTY(laserTagTurretConf, RollABall::LaserTagTurret, fireInterval);
@@ -29,7 +26,6 @@ namespace RollABall
         REGISTER_PROPERTY(laserTagTurretConf, RollABall::LaserTagTurret, projectileSpeed);
         REGISTER_PROPERTY(laserTagTurretConf, RollABall::LaserTagTurret, projectileLifeTime);
         REGISTER_PROPERTY(laserTagTurretConf, RollABall::LaserTagTurret, projectileHitImpulse);
-        REGISTER_PROPERTY(laserTagTurretConf, RollABall::LaserTagTurret, logShots);
 
         DEFAULT_CONFIG_AND_REQUIRED(laserTagTurretConf, RollABall::LaserTagTurret, Canis::Transform);
 
@@ -110,29 +106,36 @@ namespace RollABall
     {
         const Canis::Vector3 flatDirection = glm::normalize(Canis::Vector3(_direction.x, 0.0f, _direction.z));
         const float targetYaw = std::atan2(-flatDirection.x, -flatDirection.z);
-        const float yawError = std::remainder(targetYaw - _transform.rotation.y, Tau);
+        const float yawError = std::remainder(targetYaw - _transform.rotation.y, TAU);
         const float maxStep = turnSpeedDegrees * Canis::DEG2RAD * _dt;
         const float appliedStep = std::clamp(yawError, -maxStep, maxStep);
 
         _transform.rotation.y += appliedStep;
-        return std::remainder(targetYaw - _transform.rotation.y, Tau);
+        return std::remainder(targetYaw - _transform.rotation.y, TAU);
     }
 
     void LaserTagTurret::Fire(const Canis::Vector3& _position, const Canis::Vector3& _direction)
     {
-        SuperPupUtilities::SimpleObjectPool* pool = SuperPupUtilities::SimpleObjectPool::GetInstance();
-        if (pool == nullptr)
-        {
-            if (logShots)
-                Canis::Debug::Warning("LaserTagTurret: no SimpleObjectPool instance was found.");
-            return;
-        }
-
         const Canis::Vector3 flatDirection = glm::normalize(Canis::Vector3(_direction.x, 0.0f, _direction.z));
         const float yaw = std::atan2(-flatDirection.x, -flatDirection.z);
         const Canis::Vector3 rotation = Canis::Vector3(0.0f, yaw, 0.0f);
 
-        Canis::Entity* projectile = pool->SpawnFromPool(poolCode, _position, rotation);
+        std::vector<Canis::Entity*> loaded = entity.scene.Instantiate(laserPrefab);
+
+        Canis::Entity* projectile = nullptr;
+
+        if (loaded.size() > 0)
+        {
+            projectile = loaded[0];
+
+            if (projectile->HasComponent<Transform>())
+            {
+                Transform& transform = projectile->GetComponent<Transform>();
+                transform.position = _position;
+                transform.rotation = rotation;
+            }
+        }
+
         if (projectile == nullptr)
             return;
 
@@ -143,8 +146,5 @@ namespace RollABall
             bullet->hitImpulse = projectileHitImpulse;
             bullet->Launch();
         }
-
-        if (logShots)
-            Canis::Debug::Log("%s fired from pool '%s'.", entity.name.c_str(), poolCode.c_str());
     }
 }

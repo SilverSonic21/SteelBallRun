@@ -11,6 +11,7 @@ namespace RollABall
     public:
         static constexpr const char* ScriptName = "RollABall::LaserTagTurret";
 
+        Canis::SceneAssetHandle laserPrefab = {};
         std::string targetTag = "Player";
         std::string poolCode = "laser_bullet";
         float fireInterval = 1.75f;
@@ -20,7 +21,6 @@ namespace RollABall
         float projectileSpeed = 14.0f;
         float projectileLifeTime = 4.0f;
         float projectileHitImpulse = 6.0f;
-        bool logShots = false;
 
         explicit LaserTagTurret(Canis::Entity& _entity) : Canis::ScriptableEntity(_entity) {}
 
