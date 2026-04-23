@@ -407,4 +407,17 @@ namespace AICombat
     {
         return m_currentHealth > 0;
     }
+
+    void BrawlerStateMachine::TakeHeal(int _heal)
+    {
+        if (!IsAlive())
+            return;
+
+        const int healToApply = std::max(_heal, 0);
+        if (healToApply <= 0)
+            return;
+
+        m_currentHealth = std::min(maxHealth, m_currentHealth + healToApply);
+    }
+        
 }

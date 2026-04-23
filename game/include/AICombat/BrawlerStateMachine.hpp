@@ -87,6 +87,7 @@ namespace AICombat
         void ResetHammerPose();
         void SetHammerSwing(float _normalized);
         void TakeDamage(int _damage);
+        void TakeHeal(int _heal);
         bool IsAlive() const;
 
     private:
@@ -98,6 +99,7 @@ namespace AICombat
         Canis::Vector4 m_baseColor = Canis::Vector4(1.0f);
         bool m_hasBaseColor = false;
         bool m_useFirstHitSfx = true;
+
     };
 
     void RegisterBrawlerStateMachineScript(Canis::App& _app);
