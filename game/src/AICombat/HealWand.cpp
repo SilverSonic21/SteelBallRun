@@ -1,6 +1,6 @@
 #include <AICombat/HealWand.hpp>
 
-#include <AICombat/BrawlerStateMachine.hpp>
+#include <AICombat/HealerStateMachine.hpp>
 
 #include <Canis/App.hpp>
 #include <Canis/ConfigHelper.hpp>
@@ -17,26 +17,27 @@ namespace AICombat
 
     void RegisterHealWandScript(Canis::App& _app)
     {
-        REGISTER_PROPERTY(healWandConf, AICombat::HealWand, owner);
-        REGISTER_PROPERTY(healWandConf, AICombat::HealWand, sensorSize);
-        REGISTER_PROPERTY(healWandConf, AICombat::HealWand, healAmount);
-        REGISTER_PROPERTY(healWandConf, AICombat::HealWand, targetTag);
+        REGISTER_PROPERTY(healWandConf, AICombat::Heal, owner);
+        REGISTER_PROPERTY(healWandConf, AICombat::Heal, sensorSize);
+        REGISTER_PROPERTY(healWandConf, AICombat::Heal, healAmount);
+        REGISTER_PROPERTY(healWandConf, AICombat::Heal, targetTag);
+
 
         DEFAULT_CONFIG_AND_REQUIRED(
             healWandConf,
-            AICombat::HealWand,
+            AICombat::Heal,
             Canis::Transform,
             Canis::Rigidbody,
             Canis::BoxCollider);
 
-        healWandConf.DEFAULT_DRAW_INSPECTOR(AICombat::HealWand);
+        healWandConf.DEFAULT_DRAW_INSPECTOR(AICombat::Heal);
 
         _app.RegisterScript(healWandConf);
     }
 
-    DEFAULT_UNREGISTER_SCRIPT(healWandConf, HealWand)
+    DEFAULT_UNREGISTER_SCRIPT(healWandConf, Heal)
 
-    void HealWand::Create()
+    void Heal::Create()
     {
         entity.GetComponent<Canis::Transform>();
 
@@ -51,29 +52,29 @@ namespace AICombat
         entity.GetComponent<Canis::BoxCollider>().size = sensorSize;
     }
 
-    void HealWand::Ready()
+    void Heal::Ready()
     {
         if (owner == nullptr)
             owner = FindOwnerFromHierarchy();
 
         if (targetTag.empty())
         {
-            if (BrawlerStateMachine* ownerStateMachine = GetOwnerStateMachine())
+            if (HealerStateMachine* ownerStateMachine = GetOwnerStateMachine())
                 targetTag = ownerStateMachine->targetTag;
         }
     }
 
-    void HealWand::Update(float)
+    void Heal::Update(float)
     {
         CheckSensorEnter();
     }
 
-    void HealWand::CheckSensorEnter()
+    void Heal::CheckSensorEnter()
     {
         if (!entity.HasComponents<Canis::BoxCollider, Canis::Rigidbody>())
             return;
 
-        BrawlerStateMachine* ownerStateMachine = GetOwnerStateMachine();
+        HealerStateMachine* ownerStateMachine = GetOwnerStateMachine();
         if (ownerStateMachine == nullptr || !ownerStateMachine->IsAlive())
         {
             m_healedTargetsThisSwing.clear();
@@ -81,14 +82,14 @@ namespace AICombat
         }
 
 
-        std::vector<BrawlerStateMachine*> candidates;
+        std::vector<HealerStateMachine*> candidates;
 
         for (Canis::Entity* other : entity.GetComponent<Canis::BoxCollider>().entered)
         {
             if (other == nullptr || !other->active || other == owner || HasHealedThisSwing(*other))
                 continue;
 
-            BrawlerStateMachine* targetStateMachine = other->GetScript<BrawlerStateMachine>();
+            HealerStateMachine* targetStateMachine = other->GetScript<HealerStateMachine>();
             if (targetStateMachine == nullptr || !targetStateMachine->IsAlive())
                 continue;
 
@@ -102,9 +103,9 @@ namespace AICombat
             return;
 
         // Find the one with least health
-        BrawlerStateMachine* targetToHeal = nullptr;
+        HealerStateMachine* targetToHeal = nullptr;
         int minHealth = std::numeric_limits<int>::max();
-        for (BrawlerStateMachine* candidate : candidates)
+        for (HealerStateMachine* candidate : candidates)
         {
             int health = candidate->GetCurrentHealth();
             if (health < minHealth)
@@ -121,7 +122,7 @@ namespace AICombat
         }
     }
 
-    BrawlerStateMachine* HealWand::GetOwnerStateMachine()
+    HealerStateMachine* Heal::GetOwnerStateMachine()
     {
         if (owner == nullptr)
             owner = FindOwnerFromHierarchy();
@@ -129,10 +130,10 @@ namespace AICombat
         if (owner == nullptr || !owner->active)
             return nullptr;
 
-        return owner->GetScript<BrawlerStateMachine>();
+        return owner->GetScript<HealerStateMachine>();
     }
 
-    Canis::Entity* HealWand::FindOwnerFromHierarchy() const
+    Canis::Entity* Heal::FindOwnerFromHierarchy() const
     {
         if (!entity.HasComponent<Canis::Transform>())
             return nullptr;
@@ -140,7 +141,7 @@ namespace AICombat
         Canis::Entity* current = entity.GetComponent<Canis::Transform>().parent;
         while (current != nullptr)
         {
-            if (current->HasScript<BrawlerStateMachine>())
+            if (current->HasScript<HealerStateMachine>())
                 return current;
 
             if (!current->HasComponent<Canis::Transform>())
@@ -152,9 +153,9 @@ namespace AICombat
         return nullptr;
     }
 
-    bool HealWand::HasHealedThisSwing(Canis::Entity& _target) const
+    bool Heal::HasHealedThisSwing(Canis::Entity& _target) const
     {
-        return std::find(m_healedTargetsThisSwing.begin(), m_healedTargetsThisSwing.end(), &_target)
-            != m_healedTargetsThisSwing.end();
+        return std::find(m_healedTargetsThisSwing.begin(), m_healedTargetsThisSwing.end(), &_target) != m_healedTargetsThisSwing.end();
     }
+
 }

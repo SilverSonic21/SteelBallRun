@@ -6,19 +6,19 @@
 
 namespace AICombat
 {
-    class BrawlerStateMachine;
+    class HealerStateMachine;
 
-    class HealWand : public Canis::ScriptableEntity
+    class Heal : public Canis::ScriptableEntity
     {
     public:
-        static constexpr const char* ScriptName = "AICombat::HealWand";
+        static constexpr const char* ScriptName = "AICombat::Heal";
 
         Canis::Entity* owner = nullptr;
         Canis::Vector3 sensorSize = Canis::Vector3(1.0f);
         int healAmount = 10;
         std::string targetTag = "";
 
-        explicit HealWand(Canis::Entity& _entity) : Canis::ScriptableEntity(_entity) {}
+        explicit Heal(Canis::Entity& _entity) : Canis::ScriptableEntity(_entity) {}
 
         void Create() override;
         void Ready() override;
@@ -27,7 +27,7 @@ namespace AICombat
         void CheckSensorEnter();
 
     private:
-        BrawlerStateMachine* GetOwnerStateMachine();
+        HealerStateMachine* GetOwnerStateMachine();
         Canis::Entity* FindOwnerFromHierarchy() const;
         bool HasHealedThisSwing(Canis::Entity& _target) const;
 
