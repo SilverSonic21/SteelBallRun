@@ -1,7 +1,6 @@
 #include <AICombat/HealerStateMachine.hpp>
 
 
-
 #include <Canis/App.hpp>
 #include <Canis/AudioManager.hpp>
 #include <Canis/ConfigHelper.hpp>
@@ -18,34 +17,34 @@ namespace AICombat
         ScriptConf HealerStateMachineConf = {};
     }
 
-    HealStateU::HealStateU(SuperPupUtilities::HealerStateMachine& _HealerStateMachine) :
+    IdleHealState::IdleHealState(SuperPupUtilities::HealerStateMachine& _HealerStateMachine) :
         State(Name, _HealerStateMachine) {}
 
-    void HealStateU::Enter()
+    void IdleHealState::Enter()
     {
         if (HealerStateMachine* healerStateMachine = dynamic_cast<HealerStateMachine*>(m_HealerStateMachine))
-            healerStateMachine->ResetHealPose();
+            healerStateMachine->ResetHealWandPose();
     }
 
-    void HealStateU::Update(float)
+    void IdleHealState::Update(float)
     {
         if (HealerStateMachine* healerStateMachine = dynamic_cast<HealerStateMachine*>(m_HealerStateMachine))
         {
             if (healerStateMachine->FindClosestTarget() != nullptr)
-                healerStateMachine->ChangeState(ChaseState::Name);
+                healerStateMachine->ChangeState(HealChaseState::Name);
         }
     }
 
-    ChaseState::ChaseState(SuperPupUtilities::HealerStateMachine& _HealerStateMachine) :
+    HealChaseState::HealChaseState(SuperPupUtilities::HealerStateMachine& _HealerStateMachine) :
         State(Name, _HealerStateMachine) {}
 
-    void ChaseState::Enter()
+    void HealChaseState::Enter()
     {
         if (HealerStateMachine* healerStateMachine = dynamic_cast<HealerStateMachine*>(m_HealerStateMachine))
-            healerStateMachine->ResetHealPose();
+            healerStateMachine->ResetHealWandPose();
     }
 
-    void ChaseState::Update(float _dt)
+    void HealChaseState::Update(float _dt)
     {
         HealerStateMachine* healerStateMachine = dynamic_cast<HealerStateMachine*>(m_HealerStateMachine);
         if (healerStateMachine == nullptr)
@@ -82,11 +81,11 @@ namespace AICombat
     void HealStateU::Update(float)
     {
         HealerStateMachine* healerStateMachine = dynamic_cast<HealerStateMachine*>(m_HealerStateMachine);
-        if (healerStatMachine == nullptr)
+        if (healerStateMachine == nullptr)
             return;
 
         if (Canis::Entity* target = healerStateMachine->FindClosestTarget())
-            healerStatMachine->FaceTarget(*target);
+            healerStateMachine->FaceTarget(*target);
 
         const float duration = std::max(attackDuration, 0.001f);
         healerStateMachine->SetHealSwing(healerStateMachine->GetStateTime() / duration);
@@ -95,7 +94,7 @@ namespace AICombat
             return;
 
         if (healerStateMachine->FindClosestTarget() != nullptr)
-            healerStateMachine->ChangeState(ChaseState::Name);
+            healerStateMachine->ChangeState(HealChaseState::Name);
         else
             healerStateMachine->ChangeState(HealStateU::Name);
     }
@@ -103,36 +102,36 @@ namespace AICombat
     void HealStateU::Exit()
     {
         if (HealerStateMachine* healerStateMachine = dynamic_cast<HealerStateMachine*>(m_HealerStateMachine))
-            healerStateMachine->ResetHealPose();
+            healerStateMachine->ResetHealWandPose();
     }
 
     HealerStateMachine::HealerStateMachine(Canis::Entity& _entity) :
         SuperPupUtilities::HealerStateMachine(_entity),
         HealStateU(*this),
         chaseState(*this),
-        HealStateU(*this) {}
+        healTimeStateTimeState(*this) {}
 
     void RegisterHealStateUScript(Canis::App& _app)
     {
-        REGISTER_PROPERTY(HealStateUConf, AICombat::HealStateU, targetTag);
-        REGISTER_PROPERTY(HealStateUConf, AICombat::HealStateU, detectionRange);
-        REGISTER_PROPERTY(HealStateUConf, AICombat::HealStateU, bodyColliderSize);
-        RegisterAccessorProperty(HealStateUConf, AICombat::HealStateU, chaseState, moveSpeed);
-        RegisterAccessorProperty(HealStateUConf, AICombat::HealStateU, HealStateU, HealRestDegrees);
-        RegisterAccessorProperty(HealStateUConf, AICombat::HealStateU, HealStateU, HealSwingDegrees);
-        RegisterAccessorProperty(HealStateUConf, AICombat::HealStateU, HealStateU, attackRange);
-        RegisterAccessorProperty(HealStateUConf, AICombat::HealStateU, HealStateU, attackDuration);
-        RegisterAccessorProperty(HealStateUConf, AICombat::HealStateU, HealStateU, attackDamageTime);
-        REGISTER_PROPERTY(HealStateUConf, AICombat::HealStateU, maxHealth);
-        REGISTER_PROPERTY(HealStateUConf, AICombat::HealStateU, logStateChanges);
-        REGISTER_PROPERTY(HealStateUConf, AICombat::HealStateU, HealVisual);
-        REGISTER_PROPERTY(HealStateUConf, AICombat::HealStateU, hitSfxPath1);
-        REGISTER_PROPERTY(HealStateUConf, AICombat::HealStateU, hitSfxPath2);
-        REGISTER_PROPERTY(HealStateUConf, AICombat::HealStateU, hitSfxVolume);
-        REGISTER_PROPERTY(HealStateUConf, AICombat::HealStateU, deathEffectPrefab);
+        REGISTER_PROPERTY(HealerStateMachineConf, AICombat::HealHealerStateMachine, targetTag);
+        REGISTER_PROPERTY(HealerStateMachineConf, AICombat::HealHealerStateMachine, detectionRange);
+        REGISTER_PROPERTY(HealerStateMachineConf, AICombat::HealHealerStateMachine, bodyColliderSize);
+        RegisterAccessorProperty(HealerStateMachineConf, AICombat::HealHealerStateMachine, chaseState, moveSpeed);
+        RegisterAccessorProperty(HealerStateMachineConf, AICombat::HealHealerStateMachine, HealRestDegrees);
+        RegisterAccessorProperty(HealerStateMachineConf, AICombat::HealHealerStateMachine, HealSwingDegrees);
+        RegisterAccessorProperty(HealerStateMachineConf, AICombat::HealHealerStateMachine, attackRange);
+        RegisterAccessorProperty(HealerStateMachineConf, AICombat::HealHealerStateMachine, attackDuration);
+        RegisterAccessorProperty(HealerStateMachineConf, AICombat::HealHealerStateMachine, attackDamageTime);
+        REGISTER_PROPERTY(HealerStateMachineConf, AICombat::HealHealerStateMachine, maxHealth);
+        REGISTER_PROPERTY(HealerStateMachineConf, AICombat::HealHealerStateMachine, logStateChanges);
+        REGISTER_PROPERTY(HealerStateMachineConf, AICombat::HealHealerStateMachine, HealVisual);
+        REGISTER_PROPERTY(HealerStateMachineConf, AICombat::HealHealerStateMachine, hitSfxPath1);
+        REGISTER_PROPERTY(HealerStateMachineConf, AICombat::HealHealerStateMachine, hitSfxPath2);
+        REGISTER_PROPERTY(HealerStateMachineConf, AICombat::HealHealerStateMachine, hitSfxVolume);
+        REGISTER_PROPERTY(HealerStateMachineConf, AICombat::HealHealerStateMachine, deathEffectPrefab);
 
         DEFAULT_CONFIG_AND_REQUIRED(
-            HealStateUConf,
+            HealerStateMachineConf,
             AICombat::HealHealerStateMachine,
             Canis::Transform,
             Canis::Material,
@@ -140,9 +139,9 @@ namespace AICombat
             Canis::Rigidbody,
             Canis::BoxCollider);
 
-        HealStateUConf.DEFAULT_DRAW_INSPECTOR(AICombat::HealHealerStateMachine);
+        HealerStateMachineConf.DEFAULT_DRAW_INSPECTOR(AICombat::HealHealerStateMachine);
 
-        _app.RegisterScript(HealStateUConf);
+        _app.RegisterScript(HealerStateMachineConf);
     }
 
     DEFAULT_UNREGISTER_SCRIPT(HealStateUConf, AICombat::HealHealerStateMachine)

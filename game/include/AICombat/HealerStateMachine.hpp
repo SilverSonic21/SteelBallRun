@@ -13,13 +13,13 @@ namespace AICombat
     class HealStateU : public SuperPupUtilities::State
     {
     public:
-        static constexpr const char* Name = "HealStateU";
+        static constexpr const char* Name = "HealStateMachine";
         std::string targetTag = "";
         float detectionRange = 20.0f;
         Canis::Vector3 bodyColliderSize = Canis::Vector3(1.0f);
         float healDuration = 0.75f;
 
-        explicit HealStateU(SuperPupUtilities::HealerStateMachine& _stateMachine);
+        explicit HealStateU(HealerStateMachine& _stateMachine);
         void Enter() override;
         void Update(float _dt) override;
         void Exit() override;
@@ -40,6 +40,7 @@ namespace AICombat
         explicit HealerStateMachine(Canis::Entity& _entity) : SuperPupUtilities::StateMachine(_entity) {}
 
         void Create() override;
+        
         void Ready() override;
         void Update(float _dt) override;
         void TakeHeal(int _heal);
