@@ -1,6 +1,5 @@
 #include <AICombat/HealWand.hpp>
 
-#include <AICombat/HealerStateMachine.hpp>
 
 #include <Canis/App.hpp>
 #include <Canis/ConfigHelper.hpp>
@@ -59,7 +58,7 @@ namespace AICombat
 
         if (targetTag.empty())
         {
-            if (HealerStateMachine* ownerStateMachine = GetOwnerStateMachine())
+            if (HealStateMachine* ownerStateMachine = GetOwnerStateMachine())
                 targetTag = ownerStateMachine->targetTag;
         }
     }
@@ -74,7 +73,7 @@ namespace AICombat
         if (!entity.HasComponents<Canis::BoxCollider, Canis::Rigidbody>())
             return;
 
-        HealerStateMachine* ownerStateMachine = GetOwnerStateMachine();
+        HealStateMachine* ownerStateMachine = GetOwnerStateMachine();
         if (ownerStateMachine == nullptr || !ownerStateMachine->IsAlive())
         {
             m_healedTargetsThisSwing.clear();
@@ -82,14 +81,14 @@ namespace AICombat
         }
 
 
-        std::vector<HealerStateMachine*> candidates;
+        std::vector<HealStateMachine*> candidates;
 
         for (Canis::Entity* other : entity.GetComponent<Canis::BoxCollider>().entered)
         {
             if (other == nullptr || !other->active || other == owner || HasHealedThisSwing(*other))
                 continue;
 
-            HealerStateMachine* targetStateMachine = other->GetScript<HealerStateMachine>();
+            HealStateMachine* targetStateMachine = other->GetScript<HealStateMachine>();
             if (targetStateMachine == nullptr || !targetStateMachine->IsAlive())
                 continue;
 
@@ -103,9 +102,9 @@ namespace AICombat
             return;
 
         // Find the one with least health
-        HealerStateMachine* targetToHeal = nullptr;
+        HealStateMachine* targetToHeal = nullptr;
         int minHealth = std::numeric_limits<int>::max();
-        for (HealerStateMachine* candidate : candidates)
+        for (HealStateMachine* candidate : candidates)
         {
             int health = candidate->GetCurrentHealth();
             if (health < minHealth)
@@ -122,7 +121,7 @@ namespace AICombat
         }
     }
 
-    HealerStateMachine* Heal::GetOwnerStateMachine()
+    HealStateMachine* Heal::GetOwnerStateMachine()
     {
         if (owner == nullptr)
             owner = FindOwnerFromHierarchy();
@@ -130,7 +129,7 @@ namespace AICombat
         if (owner == nullptr || !owner->active)
             return nullptr;
 
-        return owner->GetScript<HealerStateMachine>();
+        return owner->GetScript<HealStateMachine>();
     }
 
     Canis::Entity* Heal::FindOwnerFromHierarchy() const
@@ -141,7 +140,7 @@ namespace AICombat
         Canis::Entity* current = entity.GetComponent<Canis::Transform>().parent;
         while (current != nullptr)
         {
-            if (current->HasScript<HealerStateMachine>())
+            if (current->HasScript<HealStateMachine>())
                 return current;
 
             if (!current->HasComponent<Canis::Transform>())

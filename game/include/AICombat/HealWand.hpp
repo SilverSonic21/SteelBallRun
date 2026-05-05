@@ -1,12 +1,12 @@
 #pragma once
 
 #include <Canis/Entity.hpp>
+#include <AICombat/HealerStateMachine.hpp>
 
 #include <vector>
 
 namespace AICombat
 {
-    class HealerStateMachine;
 
     class Heal : public Canis::ScriptableEntity
     {
@@ -27,14 +27,14 @@ namespace AICombat
         void CheckSensorEnter();
 
     private:
-        HealerStateMachine* GetOwnerStateMachine();
+        HealStateMachine* GetOwnerStateMachine();
         Canis::Entity* FindOwnerFromHierarchy() const;
         bool HasHealedThisSwing(Canis::Entity& _target) const;
 
         std::vector<Canis::Entity*> m_healedTargetsThisSwing = {};
     };
 
-    void RegisterHealWandScript(Canis::App& _app);
-    void UnRegisterHealWandScript(Canis::App& _app);
+    void RegisterHealScript(Canis::App& _app);
+    void UnRegisterHealScript(Canis::App& _app);
 }
     
