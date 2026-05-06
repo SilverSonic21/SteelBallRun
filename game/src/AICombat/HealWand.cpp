@@ -14,7 +14,7 @@ namespace AICombat
         ScriptConf healWandConf = {};
     }
 
-    void RegisterHealWandScript(Canis::App& _app)
+    void RegisterHealScript(Canis::App& _app)
     {
         REGISTER_PROPERTY(healWandConf, AICombat::Heal, owner);
         REGISTER_PROPERTY(healWandConf, AICombat::Heal, sensorSize);
